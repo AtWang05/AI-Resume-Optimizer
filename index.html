@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI简历优化助手</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(145deg,#eef4fb,#e3eaf5 40%,#f0f5fc);color:#1e293b;position:relative;overflow-x:hidden}
+body.dark{background:linear-gradient(135deg,#0b1121,#111827 40%,#0f172a);color:#e2e8f0}
+@keyframes a{0%,100%{transform:translate(0,0)scale(1)}33%{transform:translate(30px,-30px)scale(1.05)}66%{transform:translate(-20px,20px)scale(0.95)}}
+@keyframes b{0%,100%{transform:translate(0,0)scale(1)}33%{transform:translate(-25px,-20px)scale(1.08)}66%{transform:translate(20px,25px)scale(0.92)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0}.blob.a{top:-15%;left:-10%;width:55vw;height:55vw;background:radial-gradient(circle,rgba(91,127,199,0.12),transparent 70%);animation:a 18s ease-in-out infinite}.blob.b{bottom:-15%;right:-8%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(124,159,214,0.1),transparent 70%);animation:b 22s ease-in-out infinite}.blob.c{top:45%;right:-5%;width:30vw;height:30vw;background:radial-gradient(circle,rgba(107,147,214,0.08),transparent 70%);animation:a 25s ease-in-out infinite reverse}
+.glass{border-radius:16px;background:rgba(255,255,255,.35);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.4);box-shadow:0 8px 32px rgba(59,95,161,.08);padding:20px 24px}.dark .glass{background:rgba(15,23,42,.45);border-color:rgba(71,85,105,.35)}
+.glass2{border-radius:12px;background:rgba(255,255,255,.5);backdrop-filter:blur(8px);border:1px solid rgba(148,163,184,.25);padding:10px 12px;font-size:14px;color:#334155;outline:none;width:100%}.glass2:focus{border-color:rgba(91,127,199,.5);box-shadow:0 0 0 3px rgba(91,127,199,.12)}.glass2::placeholder{color:#cbd5e1}.dark .glass2{background:rgba(30,41,59,.5);border-color:rgba(71,85,105,.3);color:#e2e8f0}.dark .glass2:focus{border-color:rgba(124,159,214,.4)}.dark .glass2::placeholder{color:#475569}
+.btn{border:none;border-radius:12px;padding:10px 20px;font-size:14px;font-weight:500;cursor:pointer;background:linear-gradient(135deg,#5b7fc7,#4a6db5);color:#fff;box-shadow:0 4px 16px rgba(91,127,199,.2);transition:all .25s;display:inline-flex;align-items:center;gap:8px}.btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(91,127,199,.3)}.btn:active{transform:scale(.97)}
+.btn2{background:rgba(59,130,246,.08);color:#5b7fc7;border:1px dashed rgba(91,127,199,.3);border-radius:10px;padding:8px 16px;font-size:13px;cursor:pointer;transition:all .25s}.btn2:hover{background:rgba(59,130,246,.15)}
+.grid2{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:1024px){.grid2{grid-template-columns:1fr 1fr}}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500}.tag-g{background:rgba(74,222,128,.15);color:#166534}.tag-r{background:rgba(248,113,113,.12);color:#991b1b}.dark .tag-g{background:rgba(74,222,128,.1);color:#86efac}.dark .tag-r{background:rgba(248,113,113,.1);color:#fca5a5}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:12px;font-size:13px;z-index:100;background:rgba(255,255,255,.5);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.5);color:#334155;opacity:0;pointer-events:none;white-space:nowrap;max-width:90vw;transition:opacity .35s}.dark .toast{background:rgba(15,23,42,.55);border-color:rgba(71,85,105,.4);color:#cbd5e1}
+.result h2{font-size:1.05rem;font-weight:700;margin-top:1rem;margin-bottom:.5rem;padding-bottom:.25rem;border-bottom:2px solid rgba(148,163,184,.25);word-break:break-word}.result h3{font-size:.95rem;font-weight:700;margin-top:.75rem;margin-bottom:.25rem;word-break:break-word}.result ul,.result ol{padding-left:1.5rem;margin:.4rem 0}.result li{margin-bottom:.2rem;word-break:break-word}.result p{margin-bottom:.5rem;line-height:1.7;word-break:break-word}.result strong{font-weight:700}
+.dark .result h2{border-bottom-color:rgba(71,85,105,.3)}.dark .result li,.dark .result p{color:#cbd5e1}.dark .result strong{color:#f1f5f9}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:rgba(148,163,184,.25);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="blob a"></div><div class="blob b"></div><div class="blob c"></div>
+
+<header class="glass" style="position:sticky;top:12px;margin:12px;z-index:30;padding:12px 20px">
+<div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#60a5fa,#4a6db5);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff">🎯</div>
+<div><div style="font-weight:700;font-size:16px">AI简历优化助手</div><div style="font-size:10px;color:#94a3b8;margin-top:-2px">上传简历 · 智能匹配 · 深度优化</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<span id="sb" style="display:none;align-items:center;gap:6px;padding:4px 14px;border-radius:12px;background:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.3)"><span id="sn" style="font-weight:800;font-size:16px;color:#5b7fc7">0</span><span style="font-size:11px;color:#64748b">分</span></span>
+<button onclick="var d=!document.body.classList.contains('dark');document.body.classList.toggle('dark',d);this.textContent=d?'☀️':'🌙';localStorage.setItem('theme',d?'dark':'light')" style="width:32px;height:32px;border-radius:10px;border:1px solid rgba(148,163,184,.25);background:rgba(255,255,255,.5);cursor:pointer;font-size:14px" id="tb">🌙</button>
+</div>
+</div>
+</header>
+
+<main style="max-width:1280px;margin:0 auto;padding:12px 16px;position:relative;z-index:10" class="grid2">
+
+<!-- ===== LEFT: INPUT ===== -->
+<div class="glass" style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:8px"><span style="width:4px;height:16px;border-radius:4px;background:#60a5fa"></span><span style="font-size:13px;font-weight:600;color:#475569">📥 输入面板</span></div>
+
+<!-- API Key -->
+<div>
+<label style="font-size:12px;color:#64748b;display:block;margin-bottom:6px">🔑 DeepSeek API Key</label>
+<div class="glass2" style="display:flex;align-items:center;padding:2px 4px 2px 12px">
+<input id="ak" type="password" placeholder="sk-..." style="flex:1;border:none;background:transparent;outline:none;font-size:14px;padding:8px 4px 8px 0">
+<button onclick="var e=document.getElementById('ak');e.type=e.type==='password'?'text':'password'" style="background:none;border:none;cursor:pointer;font-size:14px;padding:4px 8px">👁️</button>
+</div>
+</div>
+
+<!-- Upload Resume Section -->
+<div>
+<label style="font-size:12px;color:#64748b;display:block;margin-bottom:6px">📄 上传简历文件</label>
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+<div style="flex:1;min-width:200px">
+<label for="pdfInput" class="btn2" style="display:block;text-align:center;width:100%">
+<span style="font-size:16px;display:block;margin-bottom:4px">📤</span>
+<span>选择文件（PDF / TXT）</span>
+</label>
+<input id="pdfInput" type="file" accept=".pdf,.txt" style="display:none">
+</div>
+<div id="fileInfo" style="font-size:11px;color:#94a3b8;display:none"></div>
+</div>
+<div id="parseStatus" style="font-size:11px;color:#64748b;margin-top:6px;display:none"></div>
+</div>
+
+<!-- Resume Textarea -->
+<div>
+<label style="font-size:12px;color:#64748b;display:flex;justify-content:space-between;margin-bottom:6px"><span>📝 原始简历文本</span><span id="rc" style="color:#94a3b8;font-size:11px">0 字</span></label>
+<textarea id="rt" placeholder="上传 PDF 后文字会自动提取到这里，你也可以直接粘贴或编辑..." class="glass2" style="min-height:180px;resize:vertical;line-height:1.6;font-family:inherit"></textarea>
+</div>
+
+<!-- JD Textarea -->
+<div>
+<label style="font-size:12px;color:#64748b;display:flex;justify-content:space-between;margin-bottom:6px"><span>🎯 目标岗位 JD</span><span id="jc" style="color:#94a3b8;font-size:11px">0 字</span></label>
+<textarea id="jt" placeholder="粘贴你想投递的岗位 JD 职责要求..." class="glass2" style="min-height:140px;resize:vertical;line-height:1.6;font-family:inherit"></textarea>
+</div>
+
+<!-- Run -->
+<div style="display:flex;gap:12px">
+<select id="ms" class="glass2" style="flex:1;cursor:pointer">
+<option value="deepseek-chat">🧠 deepseek-chat</option>
+<option value="deepseek-reasoner">🔍 deepseek-reasoner</option></select>
+<button id="run" class="btn" style="flex:1;justify-content:center">🚀 一键诊断</button>
+</div>
+<div style="font-size:10px;color:#94a3b8;text-align:center">💡 快捷键 ⌘ + ↵ 一键运行</div>
+</div>
+
+<!-- ===== RIGHT: OUTPUT ===== -->
+<div class="glass" style="display:flex;flex-direction:column;padding-bottom:16px">
+<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:8px">
+<div style="display:flex;align-items:center;gap:8px"><span style="width:4px;height:16px;border-radius:4px;background:#60a5fa"></span><span style="font-size:13px;font-weight:600;color:#475569">📊 优化结果</span></div>
+<div id="ra" style="display:none;gap:6px;align-items:center">
+<button id="cb" style="font-size:11px;background:rgba(255,255,255,.4);padding:4px 10px;border-radius:8px;border:none;cursor:pointer;color:#64748b;transition:.2s" title="复制">📋</button>
+<button id="db" style="font-size:11px;background:rgba(255,255,255,.4);padding:4px 10px;border-radius:8px;border:none;cursor:pointer;color:#64748b;transition:.2s" title="下载">⬇️</button>
+<button id="cl" style="font-size:11px;background:rgba(255,255,255,.4);padding:4px 10px;border-radius:8px;border:none;cursor:pointer;color:#64748b;transition:.2s" title="清除">🗑️</button></div></div>
+
+<div id="oc" style="flex:1;border-radius:12px;min-height:400px;max-height:660px;overflow:hidden;display:flex;flex-direction:column;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.25)">
+<div id="ps" style="padding:60px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center">
+<div style="width:56px;height:56px;border-radius:14px;background:rgba(59,130,246,.06);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px">📄</div>
+<p style="font-size:14px;font-weight:500;color:#64748b;margin:0 0 4px">等待分析</p>
+<p style="font-size:12px;color:#94a3b8;margin:0">上传简历并粘贴 JD，点击「一键诊断」</p>
+</div>
+
+<div id="ls" style="display:none;padding:60px 24px;flex-direction:column;align-items:center;justify-content:center;flex:1">
+<div style="width:48px;height:48px;margin-bottom:20px;border:3px solid rgba(91,127,199,.1);border-top-color:#60a5fa;border-radius:50%;animation:spin 1s linear infinite"></div>
+<p style="font-size:14px;font-weight:500;color:#475569;margin:0 0 4px" id="lm">AI 正在分析简历...</p>
+<p style="font-size:12px;color:#94a3b8;margin:0" id="lsm">提取关键信息中</p>
+</div>
+
+<div id="rs" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+<div id="kb" style="display:none;padding:10px 16px;background:rgba(255,255,255,.2);border-bottom:1px solid rgba(255,255,255,.15)"></div>
+<div id="sd" style="display:none;padding:12px 16px;background:rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.1)"></div>
+<div id="rct" class="result" style="flex:1;overflow-y:auto;padding:16px 20px;font-size:13px;line-height:1.7"></div>
+</div>
+
+<div id="es" style="display:none;padding:60px 24px;flex-direction:column;align-items:center;justify-content:center;flex:1">
+<div style="width:48px;height:48px;border-radius:50%;background:rgba(239,68,68,.06);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:12px">😵</div>
+<p style="font-size:14px;font-weight:500;color:#ef4444;margin:0 0 8px" id="em">出错了</p>
+<button id="rb" style="font-size:11px;background:rgba(255,255,255,.4);padding:4px 14px;border-radius:8px;border:none;cursor:pointer;color:#64748b;transition:.2s">重试</button>
+</div>
+</div>
+
+<div style="margin-top:8px;display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;padding:0 4px">
+<span id="st">就绪</span>
+<span id="ti" style="display:none"></span>
+</div>
+</div>
+
+</main>
+<div class="toast" id="tst"></div>
+
+<!-- ===== Core Libs: 国内稳定镜像 ===== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@15/marked.min.js"></script>
+
+<script>
+/* ========== Init pdf.js worker ========== */
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+console.log('✅ pdf.js', pdfjsLib.version, 'ready');
+
+/* ========== Theme ========== */
+if(localStorage.getItem('theme')==='dark'||(!localStorage.getItem('theme')&&matchMedia('(prefers-color-scheme:dark)').matches)){
+  document.body.classList.add('dark');document.getElementById('tb').textContent='☀️';
+}
+
+/* ========== Toast ========== */
+function st(m){var t=document.getElementById('tst');t.textContent=m;t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(function(){t.style.opacity='0'},3000)}
+
+/* ========== Counters ========== */
+document.getElementById('rt').addEventListener('input',upd);document.getElementById('jt').addEventListener('input',upd);
+function upd(){
+  document.getElementById('rc').textContent=document.getElementById('rt').value.length+'字';
+  var jl=document.getElementById('jt').value.length,jc=document.getElementById('jc');
+  jc.textContent=jl+'字';jc.style.color=jl>5000?'#dc2626':jl>3000?'#d97706':'#94a3b8';
+}
+
+/* ========== FILE UPLOAD → TEXT EXTRACTION ========== */
+var pdfInput=document.getElementById('pdfInput');
+var fileInfo=document.getElementById('fileInfo');
+var parseStatus=document.getElementById('parseStatus');
+var rt=document.getElementById('rt');
+var loading=false;
+
+pdfInput.addEventListener('change',function(e){
+  if(loading)return;
+  var file=e.target.files[0];
+  if(!file)return;
+  var ext=file.name.split('.').pop().toLowerCase();
+  if(ext!=='pdf'&&ext!=='txt'){st('⚠️ 仅支持 PDF 和 TXT 文件');return;}
+  handleUpload(file);
+  // Reset input so same file can be re-selected
+  pdfInput.value='';
+});
+
+function handleUpload(file){
+  loading=true;
+  var ext=file.name.split('.').pop().toLowerCase();
+  fileInfo.style.display='block';
+  fileInfo.innerHTML='📂 <strong>'+file.name+'</strong> <span style="color:#94a3b8">('+formatSize(file.size)+')</span>';
+  parseStatus.style.display='block';
+  parseStatus.innerHTML='⏳ 正在提取文字...';
+  st('📂 正在解析 '+file.name+'...');
+
+  if(ext==='txt'){
+    var reader=new FileReader();
+    reader.onload=function(e){
+      rt.value=e.target.result;
+      showLoaded(file.name,'TXT');
+    };
+    reader.onerror=function(){parseStatus.innerHTML='❌ 读取失败';st('❌ 文件读取失败');loading=false;};
+    reader.readAsText(file);
+    return;
+  }
+
+  // PDF: extract text only
+  file.arrayBuffer().then(function(buf){
+    return pdfjsLib.getDocument({data:buf}).promise;
+  }).then(function(pdf){
+    var pageCount=pdf.numPages;
+    var promises=[];
+    for(var i=1;i<=pageCount;i++){
+      promises.push(pdf.getPage(i).then(function(page){
+        return page.getTextContent().then(function(tc){
+          return tc.items.map(function(item){return item.str}).join(' ');
+        });
+      }));
+    }
+    return Promise.all(promises).then(function(pageTexts){
+      return {text:pageTexts.join('\n\n'),pages:pageCount};
+    });
+  }).then(function(result){
+    rt.value=result.text;
+    showLoaded(file.name,'PDF · '+result.pages+' 页');
+  }).catch(function(err){
+    console.error('PDF parse error:',err);
+    parseStatus.innerHTML='❌ PDF 解析失败：'+err.message;
+    st('❌ 解析失败：'+err.message);
+  }).finally(function(){loading=false;});
+}
+
+function showLoaded(name,type){
+  fileInfo.innerHTML='📄 <strong>'+name+'</strong> <span style="color:#94a3b8">| '+type+'</span> <span style="color:#16a34a;background:rgba(74,222,128,.12);padding:1px 8px;border-radius:999px;font-size:10px">已加载</span>';
+  parseStatus.style.display='none';
+  upd();
+  st('✅ 已提取 '+rt.value.length+' 字');
+}
+
+function formatSize(bytes){
+  if(bytes<1024)return bytes+'B';
+  if(bytes<1048576)return (bytes/1024).toFixed(1)+'KB';
+  return (bytes/1048576).toFixed(1)+'MB';
+}
+
+/* ========== Keyword / Score ========== */
+function extKeywords(t){
+  var sw=new Set(['的','了','在','是','我','有','和','就','不','人','都','一','一个','上','也','很','到','说','要','去','你','会','着','没有','看','好','自己','这','他','她','它','们','与','及','或','对','等','从','被','把','让','向','以','为','能','已','将','并','而','但','因','所','如','之','其','中','更','最','太','多','少','过','还','可','却','才','再','又','及','则','若','虽','彼','此','且','乃','既','使','令','请','给','用','做','进行','通过','于','the','and','for','with','from','that','this','are','have','has','been','will','can','all','each','any','some','about','into','over','also','its','than','then','very','just','not','but','what','when','where','which','who']);
+  var w=t.split(/[\s,，。、；;：:（）()【】\[\]{}「」""''《》\/\\|·…—\n\r\t]+/);var f={};
+  w.forEach(function(w){w=w.trim();if(w.length<2||/^\d+$/.test(w)||sw.has(w.toLowerCase()))return;var k=w.toLowerCase();f[k]=(f[k]||0)+1});
+  return Object.entries(f).sort(function(a,b){return(b[1]-a[1])||(b[0].length-a[0].length)}).slice(0,30).map(function(e){return e[0]});
+}
+function kwMatch(j,r){var jk=extKeywords(j);var rl=r.toLowerCase();var m=[],mm=[];jk.forEach(function(k){if(rl.includes(k))m.push(k);else mm.push(k)});return{matched:m,missed:mm,total:jk.length}}
+function extScore(c){var ps=[/综合得分[：:]\s*(\d{1,3})\s*\/\s*100/i,/匹配评分[：:]\s*(\d{1,3})\s*\/\s*100/i,/总分[：:]\s*(\d{1,3})\s*\/\s*100/i,/评分[：:]\s*(\d{1,3})\s*分/i];for(var p of ps){var m=c.match(p);if(m){var s=parseInt(m[1]);if(s>=0&&s<=100)return s}}return null}
+
+/* ========== MAIN RUN ========== */
+document.getElementById('run').addEventListener('click',async function(){
+  var ak=document.getElementById('ak').value.trim(),re=rt.value.trim(),jd=document.getElementById('jt').value.trim(),ms=document.getElementById('ms').value;
+  if(!ak){st('⚠️ 请填写 API Key');return}if(!re){st('⚠️ 请上传或粘贴简历');return}if(!jd){st('⚠️ 请填写岗位 JD');return}
+
+  ['ps','rs','es'].forEach(function(id){document.getElementById(id).style.display='none'});
+  document.getElementById('ra').style.display='none';document.getElementById('sb').style.display='none';document.getElementById('sd').style.display='none';document.getElementById('ti').style.display='none';
+  document.getElementById('ls').style.display='flex';document.getElementById('st').textContent='⏳ 分析中';
+
+  var ld=[{m:'AI正在分析简历...',s:'提取关键信息中'},{m:'正在对齐岗位需求...',s:'逐条对比JD要点'},{m:'正在优化措辞表达...',s:'提升专业度和说服力'},{m:'正在检查关键字覆盖...',s:'确保与岗位匹配'},{m:'正在生成最终报告...',s:'即将呈现优化结果'}];
+  var sp=0,lm=document.getElementById('lm'),ls=document.getElementById('lsm');
+  var lt=setInterval(function(){if(sp<ld.length){lm.textContent=ld[sp].m;ls.textContent=ld[sp].s;sp++}else sp=0},2500);
+
+  var sys='你是一名资深HR专家和职业发展顾问。根据目标岗位JD对简历进行全面优化分析。\n\n输出严格使用Markdown格式：\n- 每个大标题用 ## **加粗标题**\n- 内容分点分条，用 - 或 1. 开头\n- 关键信息用 **加粗**\n\n按以下结构：\n\n## **📋 优化后的简历**\n(分条呈现)\n\n## **🔍 差距分析**\n- 差距1\n\n## **💡 优化建议**\n- 建议1\n\n## **✅ 匹配亮点**\n- 亮点1\n\n## **📊 匹配评分**\n**综合得分: [分数]/100**\n- 技能匹配: [分数]/100\n- 经验匹配: [分数]/100\n- 关键词覆盖: [分数]/100\n- 表达说服力: [分数]/100';
+
+  try{
+    var res=await fetch('https://api.deepseek.com/v1/chat/completions',{
+      method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+ak},
+      body:JSON.stringify({model:ms,temperature:0.7,max_tokens:4096,messages:[{role:'system',content:'你是HR专家和职业顾问。严格按格式输出Markdown，标题加粗，内容分条。'},{role:'user',content:sys+'\n\n## 岗位JD\n'+jd+'\n\n## 原始简历\n'+re}]})
+    });
+    if(res.ok){
+      var d=await res.json();var c=d.choices[0].message.content;var u=d.usage;
+      document.getElementById('rct').innerHTML=marked.parse(c);
+      document.getElementById('ls').style.display='none';document.getElementById('rs').style.display='flex';document.getElementById('ra').style.display='flex';
+      if(u){document.getElementById('ti').style.display='block';document.getElementById('ti').textContent='输入'+u.prompt_tokens+'·输出'+u.completion_tokens+'tokens';}
+      document.getElementById('st').textContent='✅ 完成';st('✅ 优化完成');
+
+      var sc=extScore(c);
+      if(sc!==null){document.getElementById('sn').textContent=Math.min(sc,100);document.getElementById('sb').style.display='flex'}
+
+      var sd=document.getElementById('sd');sd.innerHTML='';sd.style.display='';
+      var sl=c.match(/(技能匹配|经验匹配|关键词覆盖|表达说服力)[：:]\s*(\d{1,3})\s*\/\s*100/g);
+      if(sl&&sl.length>0){
+        var g=document.createElement('div');g.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px';
+        sl.forEach(function(l){var m=l.match(/(.+?)[：:]\s*(\d{1,3})/);if(m){var s=parseInt(m[2]);var h=s>=70?'142,70%,45%':s>=40?'55,80%,55%':'0,90%,50%';var it=document.createElement('div');it.style.cssText='display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.3)';it.innerHTML='<span style="flex:1;font-size:11px;color:#64748b">'+m[1]+'</span><div style="flex:1;height:4px;border-radius:2px;overflow:hidden;background:rgba(148,163,184,.15)"><div style="height:100%;border-radius:2px;width:'+s+'%;background:hsl('+h+')"></div></div><span style="font-size:12px;font-weight:700;color:hsl('+h+')">'+s+'</span>';g.appendChild(it)}});
+        sd.appendChild(g);
+      }else sd.style.display='none';
+
+      var kw=kwMatch(jd,re);var kb=document.getElementById('kb');kb.innerHTML='';kb.style.display='';
+      var mr=kw.total>0?Math.round((kw.matched.length/kw.total)*100):0;
+      var gd=mr>=70?'#4ade80,#22c55e':mr>=40?'#facc15,#eab308':'#f87171,#ef4444';
+      kb.innerHTML='<div style="display:flex;align-items:center;gap:12px;width:100%"><span style="font-size:11px;color:#64748b;white-space:nowrap">🔗关键字'+mr+'%</span><div style="flex:1;height:6px;border-radius:3px;overflow:hidden;background:rgba(148,163,184,.15)"><div style="height:100%;border-radius:3px;width:'+mr+'%;background:linear-gradient(90deg,'+gd+')"></div></div><span style="font-size:11px;color:#94a3b8">'+kw.matched.length+'/'+kw.total+'</span></div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">'+kw.matched.slice(0,10).map(function(k){return '<span class="tag tag-g">✓'+k+'</span>'}).join('')+(kw.missed.length>0?'<span style="font-size:11px;color:#cbd5e1;margin:0 4px">|</span>':'')+kw.missed.slice(0,8).map(function(k){return '<span class="tag tag-r">✗'+k+'</span>'}).join('')+'</div>';
+    } else throw new Error('HTTP '+res.status);
+  } catch(err){
+    clearInterval(lt);document.getElementById('ls').style.display='none';document.getElementById('es').style.display='flex';document.getElementById('em').textContent='❌ '+err.message;document.getElementById('st').textContent='❌ 出错';st('❌ '+err.message);
+  } finally{clearInterval(lt)}
+});
+
+document.getElementById('rb').onclick=function(){document.getElementById('run').click()};
+document.getElementById('cb').onclick=function(){navigator.clipboard.writeText(document.getElementById('rct').textContent).then(function(){st('📋 已复制')})};
+document.getElementById('db').onclick=function(){var b=new Blob([document.getElementById('rct').textContent],{type:'text/plain;charset=utf-8'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='简历优化报告_'+new Date().toISOString().slice(0,10)+'.txt';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);st('⬇️ 已下载')};
+document.getElementById('cl').onclick=function(){['rs','ra','kb','sb','sd'].forEach(function(id){document.getElementById(id).style.display='none'});document.getElementById('ps').style.display='flex';document.getElementById('st').textContent='就绪';document.getElementById('rct').innerHTML=''};
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();document.getElementById('run').click()}});
+</script>
+</body>
+</html>
